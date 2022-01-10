@@ -1,0 +1,5 @@
+<div class="pokemons-wrapper">
+  <div *ngFor="let pokemon of pokeService.pokemons | async">
+    <app-pokemon [pokemon]="pokemon"></app-pokemon>
+  </div>
+</div>

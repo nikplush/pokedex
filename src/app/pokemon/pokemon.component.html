@@ -1,0 +1,12 @@
+<mat-card class="pokemon-card">
+  <div *ngIf="pokemonInfo; else loader">
+    <mat-card-title class="card-title">{{pokemonInfo.name}}</mat-card-title>
+    <img
+      mat-card-image
+      src="{{pokemonInfo?.sprites.other.home.front_default}}"
+    >
+  </div>
+</mat-card>
+<ng-template #loader>
+  <div class="loader">Loading...</div>
+</ng-template>
