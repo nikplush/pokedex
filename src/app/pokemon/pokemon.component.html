@@ -5,6 +5,11 @@
       mat-card-image
       src="{{pokemonInfo?.sprites.other.home.front_default}}"
     >
+    <div class="types-wrapper">
+      <div *ngFor="let typeInfo of pokemonInfo.types" class="pokemon-type" (click)="pokeService.addType(typeInfo.type.name)">
+        {{typeInfo.type.name}}
+      </div>
+    </div>
   </div>
 </mat-card>
 <ng-template #loader>

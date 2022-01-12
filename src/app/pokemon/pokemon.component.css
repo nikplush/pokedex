@@ -67,3 +67,14 @@
 .card-title {
   text-transform: uppercase;
 }
+.pokemon-type {
+  border-radius: 5px;
+  padding: 5px;
+  background: #949494;
+  width: min-content;
+  margin: 5px;
+  cursor: pointer;
+}
+.types-wrapper {
+  display: flex;
+}

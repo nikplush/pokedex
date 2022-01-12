@@ -1,5 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
 import axios from "axios";
+import {PokemonsService} from "../service/pokemons.service";
 
 @Component({
   selector: 'app-pokemon',
@@ -11,7 +12,7 @@ export class PokemonComponent implements OnInit {
     name: string
     url: string
   } | null = null
-  constructor() { }
+  constructor(public pokeService: PokemonsService) { }
 
   pokemonInfo: any = null
 
