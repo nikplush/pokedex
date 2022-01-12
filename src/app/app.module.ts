@@ -9,7 +9,11 @@ import { PokemonComponent } from './pokemon/pokemon.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {MatProgressSpinnerModule} from "@angular/material/progress-spinner";
 import {MatCardModule} from "@angular/material/card";
-
+import {MatButtonModule} from "@angular/material/button";
+import {MatToolbarModule} from "@angular/material/toolbar";
+import {MatPaginatorModule} from "@angular/material/paginator";
+import {paginatorReducer} from "./store/paginator/paginator.reducer";
+import { EffectsModule } from '@ngrx/effects';
 @NgModule({
   declarations: [
     AppComponent,
@@ -19,10 +23,14 @@ import {MatCardModule} from "@angular/material/card";
     imports: [
         BrowserModule,
         AppRoutingModule,
-        StoreModule.forRoot({}, {}),
+        StoreModule.forRoot({paginator: paginatorReducer}, {}),
         BrowserAnimationsModule,
         MatProgressSpinnerModule,
-        MatCardModule
+        MatCardModule,
+        MatButtonModule,
+        MatToolbarModule,
+        MatPaginatorModule,
+        EffectsModule.forRoot([])
     ],
   providers: [],
   bootstrap: [AppComponent]

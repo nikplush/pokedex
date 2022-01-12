@@ -1,1 +1,16 @@
-<app-pokemons></app-pokemons>
+<mat-toolbar color="primary" class="app-toolbar">
+  <span>Pokemon Lib <3</span>
+  <mat-paginator
+    [length]='(paginator$ |async)?.itemsCount'
+    [pageSize]="10"
+    [pageSizeOptions]="[10, 50, 100]"
+    (page)="onChangePaginator($event)"
+    aria-label="Select page"
+    class="paginator"
+  >
+  </mat-paginator>
+</mat-toolbar>
+<div>
+  <app-pokemons></app-pokemons>
+</div>
+
