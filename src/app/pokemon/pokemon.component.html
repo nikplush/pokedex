@@ -1,7 +1,16 @@
 <mat-card class="pokemon-card">
   <div *ngIf="pokemonInfo; else loader">
+    <div style="display: flex; align-items: center">
     <mat-card-title class="card-title">{{pokemonInfo.name}}</mat-card-title>
-    <img
+
+      <mat-icon
+        class="material-icons-outlined"
+        (click)="processStarClick()"
+      >
+        {{isFavorite ? 'star' : 'star_border'}}
+      </mat-icon>
+    </div>
+      <img
       mat-card-image
       src="{{pokemonInfo?.sprites.other.home.front_default}}"
     >

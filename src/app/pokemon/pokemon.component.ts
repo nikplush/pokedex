@@ -1,29 +1,56 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnDestroy, OnInit} from '@angular/core';
 import axios from "axios";
 import {PokemonsService} from "../service/pokemons.service";
+import {Store} from "@ngrx/store";
+
+import {Subject} from "rxjs";
+import {FavoritePokemon} from "../store/favorites/favorites.reducer";
+import {takeUntil} from "rxjs/operators";
+import {addFavoritePokemon, removeFavoritePokemon} from "../store/favorites/favorites.actions";
+import {PaginatorOptions} from "../store/paginator/paginator.reducer";
 
 @Component({
   selector: 'app-pokemon',
   templateUrl: './pokemon.component.html',
   styleUrls: ['./pokemon.component.css']
 })
-export class PokemonComponent implements OnInit {
+export class PokemonComponent implements OnInit, OnDestroy {
   @Input() pokemon: {
     name: string
     url: string
-  } | null = null
-  constructor(public pokeService: PokemonsService) { }
+  }
+  destroy$ = new Subject<boolean>();
+  isFavorite = false;
+  pokemonInfo: any
+  paginator: PaginatorOptions
 
-  pokemonInfo: any = null
-
-  async getPokemonInfo(url: string): Promise<void> {
-    const fetchedPokeInfo = await axios(url)
-    this.pokemonInfo = fetchedPokeInfo.data
+  constructor(private store:Store<{favorites: FavoritePokemon[], paginator: PaginatorOptions }>, public pokeService: PokemonsService) {
   }
 
   ngOnInit(): void {
     if (this.pokemon?.url) {
       this.getPokemonInfo(this.pokemon.url)
     }
+    this.store.select('favorites').pipe(takeUntil(this.destroy$))
+      .subscribe(favorites => this.isFavorite = favorites.some(favoritePokemon => favoritePokemon.name === this.pokemon.name));
+    this.store.select('paginator').pipe(takeUntil(this.destroy$))
+      .subscribe(paginator => this.paginator = paginator);
+  }
+
+  processStarClick(): void {
+    if (this.isFavorite) {
+      this.store.dispatch(removeFavoritePokemon(this.pokemon));
+    } else {
+      this.store.dispatch(addFavoritePokemon(this.pokemon));
+    }
+  }
+
+  async getPokemonInfo(url: string): Promise<void> {
+    const fetchedPokeInfo = await axios(url)
+    this.pokemonInfo = fetchedPokeInfo.data
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next(true)
   }
 }

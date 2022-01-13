@@ -10,13 +10,14 @@ export interface PaginatorState {
 export interface PaginatorOptions {
   page?: number,
   itemsPerPage: number,
+  itemsCount?: number,
 }
 
 export const initialState = {page: 0, itemsCount: 0, itemsPerPage: 10};
 
 const _counterReducer = createReducer(
   initialState,
-  on(setPaginatorOptions, (state, payload: PaginatorOptions) => ({...state, page: payload?.page || 0, itemsPerPage: payload.itemsPerPage })),
+  on(setPaginatorOptions, (state, payload: PaginatorOptions) => ({...state, ...payload })),
   on(setItemsPerPage, (state: PaginatorState) => ({...state, itemsPerPage: 50})),
   on(setItemsCount, (state: PaginatorState, payload: { itemCount:number }) => ({...state, itemsCount: payload.itemCount}))
 );

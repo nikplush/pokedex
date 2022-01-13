@@ -1,5 +1,12 @@
-<div class="pokemons-wrapper">
+<div *ngIf="!(pokeService.types|async)?.length; else filtered" class="pokemons-wrapper">
   <div *ngFor="let pokemon of pokeService.pokemons | async">
     <app-pokemon [pokemon]="pokemon"></app-pokemon>
   </div>
 </div>
+<ng-template #filtered>
+  <div class="pokemons-wrapper">
+    <div *ngFor="let pokemon of (pokeService.pokemons | async)?.slice(startPokemon, endPokemon)">
+      <app-pokemon [pokemon]="pokemon"></app-pokemon>
+    </div>
+  </div>
+</ng-template>

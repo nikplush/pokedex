@@ -1,6 +1,14 @@
 <div class="header-wrapper">
   <mat-toolbar color="primary" class="app-toolbar">
-    <span>Pokemon Lib <3</span>
+    <div style="display: flex">
+      <span>Pokemon Lib <3</span>
+      <div class="navigation">
+        <a routerLink="/all"> All Pokemons </a>
+        <a routerLink="/favorite"> Favorite </a>
+      </div>
+    </div>
+
+
     <div class="header-actions">
       <mat-paginator
         [length]='(paginator$ |async)?.itemsCount'
@@ -13,7 +21,7 @@
       </mat-paginator>
     </div>
   </mat-toolbar>
-  <mat-chip-list aria-label="Fish selection" >
+  <mat-chip-list aria-label="Fish selection">
     <div class="chips">
       <mat-chip
         *ngFor="let type of pokeService.types | async"
@@ -34,8 +42,8 @@
     </div>
   </mat-chip-list>
 </div>
-<div>
-  <app-pokemons></app-pokemons>
+<div style="margin-top: 100px">
+  <router-outlet></router-outlet>
 </div>
 
 <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selected($event)">

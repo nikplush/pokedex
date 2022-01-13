@@ -1,10 +1,10 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import {AppComponent} from "./app.component";
 import {FavoriteComponent} from "./favorite/favorite.component";
+import {PokemonsComponent} from "./pokemons/pokemons.component";
 
 const routes: Routes = [
-  { path: 'all', component: AppComponent },
+  { path: 'all', component: PokemonsComponent },
   { path: 'favorite', component: FavoriteComponent},
   { path: '**', redirectTo: '/treads'}
 ];

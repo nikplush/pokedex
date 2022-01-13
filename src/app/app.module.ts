@@ -22,6 +22,8 @@ import {MatInputModule} from "@angular/material/input";
 import {ReactiveFormsModule} from "@angular/forms";
 import { FavoriteComponent } from './favorite/favorite.component';
 import { AllPokemonsComponent } from './all-pokemons/all-pokemons.component';
+import {MatButtonToggleModule} from "@angular/material/button-toggle";
+import {favoritesReducer} from "./store/favorites/favorites.reducer";
 @NgModule({
   declarations: [
     AppComponent,
@@ -34,7 +36,7 @@ import { AllPokemonsComponent } from './all-pokemons/all-pokemons.component';
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
-    StoreModule.forRoot({paginator: paginatorReducer}, {}),
+    StoreModule.forRoot({paginator: paginatorReducer, favorites: favoritesReducer}, {}),
     BrowserAnimationsModule,
     MatProgressSpinnerModule,
     MatCardModule,
@@ -46,7 +48,8 @@ import { AllPokemonsComponent } from './all-pokemons/all-pokemons.component';
     MatIconModule,
     MatAutocompleteModule,
     MatInputModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    MatButtonToggleModule
   ],
   providers: [],
   bootstrap: [AppComponent]

@@ -37,3 +37,16 @@
   display: flex;
   align-items: center;
 }
+
+.navigation {
+  color: #ffff;
+}
+
+.navigation > a {
+  margin: 10px;
+}
+
+a {
+  color: #ffff;
+  text-decoration: none;
+}

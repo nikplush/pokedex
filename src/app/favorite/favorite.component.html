@@ -1,1 +1,5 @@
-<p>favorite works!</p>
+<div class="pokemons-wrapper">
+  <div *ngFor="let pokemon of (favorites$ | async)">
+    <app-pokemon [pokemon]="pokemon"></app-pokemon>
+  </div>
+</div>

@@ -66,6 +66,7 @@
 
 .card-title {
   text-transform: uppercase;
+  margin: 0;
 }
 .pokemon-type {
   border-radius: 5px;
