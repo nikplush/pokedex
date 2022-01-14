@@ -7,7 +7,8 @@ import {Subject} from "rxjs";
 import {FavoritePokemon} from "../store/favorites/favorites.reducer";
 import {takeUntil} from "rxjs/operators";
 import {addFavoritePokemon, removeFavoritePokemon} from "../store/favorites/favorites.actions";
-import {PaginatorOptions} from "../store/paginator/paginator.reducer";
+import {PaginatorOptions} from "../store/paginator/paginator.model";
+import {HttpClient} from "@angular/common/http";
 
 @Component({
   selector: 'app-pokemon',
@@ -16,20 +17,23 @@ import {PaginatorOptions} from "../store/paginator/paginator.reducer";
 })
 export class PokemonComponent implements OnInit, OnDestroy {
   @Input() pokemon: {
-    name: string
-    url: string
+    name: string,
+    url: string,
   }
   destroy$ = new Subject<boolean>();
   isFavorite = false;
-  pokemonInfo: any
-  paginator: PaginatorOptions
+  pokemonInfo: any;
+  paginator: PaginatorOptions;
 
-  constructor(private store:Store<{favorites: FavoritePokemon[], paginator: PaginatorOptions }>, public pokeService: PokemonsService) {
-  }
+  constructor(
+    private store:Store<{favorites: FavoritePokemon[], paginator: PaginatorOptions }>,
+    public pokeService: PokemonsService,
+    private http: HttpClient,
+  ) {}
 
   ngOnInit(): void {
     if (this.pokemon?.url) {
-      this.getPokemonInfo(this.pokemon.url)
+      this.getPokemonInfo(this.pokemon.url);
     }
     this.store.select('favorites').pipe(takeUntil(this.destroy$))
       .subscribe(favorites => this.isFavorite = favorites.some(favoritePokemon => favoritePokemon.name === this.pokemon.name));
@@ -37,7 +41,7 @@ export class PokemonComponent implements OnInit, OnDestroy {
       .subscribe(paginator => this.paginator = paginator);
   }
 
-  processStarClick(): void {
+  public processStarClick(): void {
     if (this.isFavorite) {
       this.store.dispatch(removeFavoritePokemon(this.pokemon));
     } else {
@@ -45,12 +49,11 @@ export class PokemonComponent implements OnInit, OnDestroy {
     }
   }
 
-  async getPokemonInfo(url: string): Promise<void> {
-    const fetchedPokeInfo = await axios(url)
-    this.pokemonInfo = fetchedPokeInfo.data
+  private getPokemonInfo(url: string): void {
+    this.http.get(url).subscribe( pokeInfo => this.pokemonInfo = pokeInfo);
   }
 
   ngOnDestroy(): void {
-    this.destroy$.next(true)
+    this.destroy$.next(true);
   }
 }

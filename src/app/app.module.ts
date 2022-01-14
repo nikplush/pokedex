@@ -24,6 +24,10 @@ import { FavoriteComponent } from './favorite/favorite.component';
 import { AllPokemonsComponent } from './all-pokemons/all-pokemons.component';
 import {MatButtonToggleModule} from "@angular/material/button-toggle";
 import {favoritesReducer} from "./store/favorites/favorites.reducer";
+import {pokemonReducer} from "./store/pokemons/pokemon.reducer";
+import {PokemonEffects} from "./store/paginator/paginator.effects";
+import {StoreDevtoolsModule} from "@ngrx/store-devtools";
+import {environment} from "../environments/environment.prod";
 @NgModule({
   declarations: [
     AppComponent,
@@ -36,20 +40,29 @@ import {favoritesReducer} from "./store/favorites/favorites.reducer";
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
-    StoreModule.forRoot({paginator: paginatorReducer, favorites: favoritesReducer}, {}),
+    StoreModule.forRoot({
+      paginator: paginatorReducer,
+      favorites: favoritesReducer,
+      pokemons: pokemonReducer
+    }, {}),
+    EffectsModule.forRoot([PokemonEffects]),
     BrowserAnimationsModule,
     MatProgressSpinnerModule,
     MatCardModule,
     MatButtonModule,
     MatToolbarModule,
     MatPaginatorModule,
-    EffectsModule.forRoot([]),
     MatChipsModule,
     MatIconModule,
     MatAutocompleteModule,
     MatInputModule,
     ReactiveFormsModule,
-    MatButtonToggleModule
+    MatButtonToggleModule,
+    StoreDevtoolsModule.instrument({
+      name: 'NgRx Demo App',
+      logOnly: environment.production
+    })
+
   ],
   providers: [],
   bootstrap: [AppComponent]

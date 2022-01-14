@@ -1,19 +1,20 @@
-import {Injectable, OnInit} from '@angular/core';
-import {BehaviorSubject, Observable} from "rxjs";
+import {Injectable} from '@angular/core';
+import {BehaviorSubject, interval, Observable} from "rxjs";
 import {Store} from "@ngrx/store";
-import {PaginatorState} from "../store/paginator/paginator.reducer";
 import {setItemsCount, setPaginatorOptions} from "../store/paginator/paginator.actions";
 import {HttpClient} from "@angular/common/http";
-import {map, tap} from "rxjs/operators";
+import {debounce, map} from "rxjs/operators";
+import {setPokemons} from "../store/pokemons/pokemos.actions";
+import {PaginatorState} from "../store/paginator/paginator.model";
 
 interface Pokemon {
   name: string,
-  id: number
+  id: number,
 }
 
 interface Pokemons {
   results: Pokemon[],
-  count: number
+  count: number,
 }
 
 @Injectable({
@@ -22,74 +23,66 @@ interface Pokemons {
 export class PokemonsService {
   pokemons = new BehaviorSubject<any[]>([]);
   types = new BehaviorSubject<string[]>([]);
-  allTypes: string[] = []
+  allTypes: string[] = [];
 
   constructor(
     private store: Store<{ paginator: PaginatorState }>,
-    private http: HttpClient
+    private http: HttpClient,
   ) {
-    this.paginator$ = store.select('paginator')
+    this.paginator$ = store.select('paginator');
   }
 
   paginator$: Observable<PaginatorState>
 
-  async getPokemons(): Promise<void> {
-    this.getAllCountPokemons()
-    this.getAllTypes()
-    this.paginator$.subscribe(async (item) => {
-      if (!this.types.getValue().length) {
-        this.http.get(`https://pokeapi.co/api/v2/pokemon?limit=${item.itemsPerPage}&offset=${item.itemsPerPage * item.page}`)
-          .subscribe((item: any) => {
-            this.pokemons.next(item.results)
-          })
-      }
-    })
+  public async getPokemons(): Promise<void> {
+    this.getAllTypes();
+    this.http.get(`https://pokeapi.co/api/v2/pokemon?limit=10&offset=0`)
+      .subscribe((item: any) => {this.store.dispatch( setPokemons({pokemons: item.results}))});
   }
 
-  async getAllCountPokemons(): Promise<void> {
-    this.http.get('https://pokeapi.co/api/v2/pokemon').subscribe((item: any) => {
-      this.store.dispatch(setItemsCount({itemCount: item.count}))
-    })
+  public getPokemonsByPaginatorOptions(paginationOptions: { payload: { itemsPerPage: number, page: number } }): Observable<any> {
+    return this.http.get(`https://pokeapi.co/api/v2/pokemon?limit=${paginationOptions.payload.itemsPerPage}&offset=${paginationOptions.payload.itemsPerPage * paginationOptions.payload.page}`);
   }
 
-  getPokemonsByTypes(types: string[]): void {
-    let pokemons: { name: string, url: string }[] = []
+  private getPokemonsByTypes(types: string[]): void {
+    let pokemons: { name: string, url: string }[] = [];
     if (types.length)
       types.forEach((type: string) => {
-        this.http.get(`https://pokeapi.co/api/v2/type/${type}`).pipe(map((item: any) => {
-            const transformedData = item.pokemon.map((a: any) => a.pokemon)
+        this.http.get(`https://pokeapi.co/api/v2/type/${type}`).pipe(
+          map((item: any) => {
+            const transformedData = item.pokemon.map((pokemonsByType: {pokemon: Pokemon}) => pokemonsByType.pokemon);
             if (!pokemons.length) {
-              pokemons = transformedData
+              pokemons = transformedData;
             } else {
-              pokemons = transformedData.filter((pokemon: any) => pokemons.some((a: any) => a.name === pokemon.name))
+              pokemons = transformedData.filter((pokemon: any) => pokemons.some((newPokemon: any) => newPokemon.name === pokemon.name));
             }
-            return pokemons
-          })
+            return pokemons;
+          }),
         ).subscribe(item => {
-          this.pokemons.next(item)
-          this.store.dispatch(setPaginatorOptions({itemsCount: item.length, page:0, itemsPerPage: 10}))
+          this.pokemons.next(item);
+          this.store.dispatch(setPaginatorOptions({payload: {itemsCount: item.length, page: 0}}));
         })
       })
   }
 
-  addType(type: string): void {
-    const currentTypes = this.types.getValue()
+  public addType(type: string): void {
+    const currentTypes = this.types.getValue();
     if (!currentTypes.includes(type)) {
-      currentTypes.push(type)
-      this.getPokemonsByTypes(currentTypes)
-      this.types.next(currentTypes)
+      currentTypes.push(type);
+      this.getPokemonsByTypes(currentTypes);
+      this.types.next(currentTypes);
     }
   }
 
-  removeType(type: string): void {
-    const currentTypes = this.types.getValue()
-    this.getPokemonsByTypes(currentTypes)
-    this.types.next(currentTypes.filter(item => item !== type))
+  public removeType(type: string): void {
+    const currentTypes = this.types.getValue();
+    this.getPokemonsByTypes(currentTypes);
+    this.types.next(currentTypes.filter(item => item !== type));
   }
 
   private async getAllTypes(): Promise<void> {
     this.http.get('https://pokeapi.co/api/v2/type').subscribe((item: any) => {
-      this.allTypes = item.results.map((type: any) => type.name)
+      this.allTypes = item.results.map((type: any) => type.name);
     })
   }
 }

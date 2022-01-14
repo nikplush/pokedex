@@ -6,7 +6,7 @@ import {PokemonsComponent} from "./pokemons/pokemons.component";
 const routes: Routes = [
   { path: 'all', component: PokemonsComponent },
   { path: 'favorite', component: FavoriteComponent},
-  { path: '**', redirectTo: '/treads'}
+  { path: '**', redirectTo: '/all'}
 ];
 
 @NgModule({

@@ -1,5 +1,5 @@
 <div *ngIf="!(pokeService.types|async)?.length; else filtered" class="pokemons-wrapper">
-  <div *ngFor="let pokemon of pokeService.pokemons | async">
+  <div *ngFor="let pokemon of pokemons$ | async">
     <app-pokemon [pokemon]="pokemon"></app-pokemon>
   </div>
 </div>

@@ -1,23 +1,10 @@
 import {createReducer, on} from '@ngrx/store';
 import {setItemsCount, setItemsPerPage, setPaginatorOptions} from "./paginator.actions";
-
-export interface PaginatorState {
-  page: number,
-  itemsCount: number,
-  itemsPerPage: number,
-}
-
-export interface PaginatorOptions {
-  page?: number,
-  itemsPerPage: number,
-  itemsCount?: number,
-}
-
-export const initialState = {page: 0, itemsCount: 0, itemsPerPage: 10};
+import {initialState, PaginatorOptions, PaginatorState} from "./paginator.model";
 
 const _counterReducer = createReducer(
   initialState,
-  on(setPaginatorOptions, (state, payload: PaginatorOptions) => ({...state, ...payload })),
+  on(setPaginatorOptions, (state, action: {payload: PaginatorOptions }) => ({...state, ...action.payload })),
   on(setItemsPerPage, (state: PaginatorState) => ({...state, itemsPerPage: 50})),
   on(setItemsCount, (state: PaginatorState, payload: { itemCount:number }) => ({...state, itemsCount: payload.itemCount}))
 );
