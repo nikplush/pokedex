@@ -34,7 +34,8 @@ export class PokemonsService {
 
   paginator$: Observable<PaginatorState>
 
-  public async getPokemons(): Promise<void> {
+  public getPokemons(): void {
+    this.getAllCountPokemons()
     this.getAllTypes();
     this.http.get(`https://pokeapi.co/api/v2/pokemon?limit=10&offset=0`)
       .subscribe((item: any) => {this.store.dispatch( setPokemons({pokemons: item.results}))});
@@ -42,6 +43,12 @@ export class PokemonsService {
 
   public getPokemonsByPaginatorOptions(paginationOptions: { payload: { itemsPerPage: number, page: number } }): Observable<any> {
     return this.http.get(`https://pokeapi.co/api/v2/pokemon?limit=${paginationOptions.payload.itemsPerPage}&offset=${paginationOptions.payload.itemsPerPage * paginationOptions.payload.page}`);
+  }
+
+  getAllCountPokemons(): void {
+    this.http.get('https://pokeapi.co/api/v2/pokemon').subscribe((item: any) => {
+      this.store.dispatch(setItemsCount({itemCount: item.count}))
+    })
   }
 
   private getPokemonsByTypes(types: string[]): void {
@@ -75,12 +82,12 @@ export class PokemonsService {
   }
 
   public removeType(type: string): void {
-    const currentTypes = this.types.getValue();
+    const currentTypes = this.types.getValue().filter(item => item !== type);
     this.getPokemonsByTypes(currentTypes);
-    this.types.next(currentTypes.filter(item => item !== type));
+    this.types.next(currentTypes);
   }
 
-  private async getAllTypes(): Promise<void> {
+  private getAllTypes(): void {
     this.http.get('https://pokeapi.co/api/v2/type').subscribe((item: any) => {
       this.allTypes = item.results.map((type: any) => type.name);
     })

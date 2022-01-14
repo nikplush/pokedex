@@ -4,6 +4,7 @@ import {mergeMap,concatMap} from 'rxjs/operators';
 import {PokemonsService} from "../../service/pokemons.service";
 import * as PaginatorActions from "./paginator.actions";
 import {setPokemons} from "../pokemons/pokemos.actions";
+import {PaginatorOptions} from "./paginator.model";
 
 @Injectable()
 export class PokemonEffects {
